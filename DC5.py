@@ -38,3 +38,47 @@ coolest_year = min(result,key=result.get)
 print('Average Temperature per Year :',result)
 print('Hottest year :',hottest_year)
 print('Coolest year :',coolest_year)
+#########################################################################################################################################
+import pandas as pd
+#insert file path
+def read_data():
+    df = pd.read_csv('/Users//Desktop/weather.csv')
+    data = list(zip(df['year'], df['temp']))
+    return data
+
+def mapper(data):
+    mapped = []
+    for record in data:
+        year, temp = record
+        mapped.append((year, temp))
+    return mapped
+
+def shuffle_sort(mapped_data):
+    grouped = {}
+    for year, temp in mapped_data:
+        if year not in grouped:
+            grouped[year] = []
+        grouped[year].append(temp)
+    return grouped
+
+def reducer(grouped_data):
+    avg_temp = {}
+    for year, temps in grouped_data.items():
+        avg_temp[year] = sum(temps) / len(temps)
+    return avg_temp
+
+# Read data using full path
+data = read_data()
+
+# MapReduce flow
+mapped = mapper(data)
+grouped = shuffle_sort(mapped)
+result = reducer(grouped)
+
+# Final results
+hottest_year = max(result, key=result.get)
+coolest_year = min(result, key=result.get)
+
+print('Average Temperature per Year:', result)
+print('Hottest year:', hottest_year)
+print('Coolest year:', coolest_year)
